@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Репетиторы - УчебаВместе</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .balance-table {
+            margin-top: 3rem;
+            background: var(--card);
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 20px var(--shadow);
+        }
+        
+        .balance-table-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .balance-table-header h2 {
+            margin: 0;
+            color: var(--fg);
+        }
+        
+        .balance-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .balance-table th {
+            background: var(--bg);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--muted-fg);
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .balance-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .balance-cell {
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .balance-positive {
+            color: #10b981;
+        }
+        
+        .balance-negative {
+            color: #ef4444;
+        }
+        
+        .balance-warning {
+            color: #f59e0b;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-balance {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .btn-balance:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-history {
+            background: var(--bg);
+            color: var(--fg);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+        
+        .btn-history:hover {
+            background: var(--border);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .status-active {
+            background: #dcfce7;
+            color: #15803d;
+        }
+        
+        .status-inactive {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+        
+        .balance-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .teacher-avatar-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html" class="logo-link">УчебаВместе</a>
+                </div>
+                <nav>
+                    <a href="index.html#subjects">Предметы</a>
+                    <a href="teacher.html">Репетиторы</a>
+                </nav>
+                <div class="header-actions">
+                  <div class="user-info">
+
+                        </div>                 
+                           <div class="user-profile">
+                        <div class="user-avatar">${initials}</div>
+                        <div class="user-info">
+                            <span class="user-greeting">Здравствуйте,</span>
+                            <a href="profile.html" class="user-name">Иван</a>
+                        </div>
+                        <button onclick="logout()" class="btn btn-outline btn-sm">Выйти</button>
+                    </div>
+                    <div id="userAuthSection"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Teachers List Section -->
+    <section class="teachers-section">
+        <div class="container">
+            <div class="section-header">
+                <h1>Наши репетиторы</h1>
+                <p>Выберите подходящего репетитора из нашей команды профессионалов</p>
+            </div>
+
+            <div class="teachers-grid">
+                <!-- Анна Петрова -->
+                <div class="teacher-card">
+                    <div class="teacher-card-header">
+                        <div class="teacher-avatar">
+                            <img src="img/АннаПетрова.jpg" alt="Анна Петрова" onerror="this.src='https://ui-avatars.com/api/?name=Анна+Петрова&background=01497c&color=fff&size=400'">
+                        </div>
+                        <div class="teacher-info">
+                            <h2 class="teacher-name">Анна Петрова</h2>
+                            <p class="teacher-subjects">Математика, Физика</p>
+                        </div>
+                    </div>
+                    <div class="teacher-stats">
+                        <div class="teacher-stat">
+                            <div class="stat-value">8 лет</div>
+                            <div class="stat-label">Опыт</div>
+                        </div>
+                        <div class="teacher-stat">
+                            <div class="stat-value">350+</div>
+                            <div class="stat-label">Учеников</div>
+                        </div>
+                    </div>
+                    <p class="teacher-description">Кандидат физико-математических наук. Специализация подготовка к ЕГЭ и олимпиадам.</p>
+                    <div class="teacher-actions">
+                        <button class="btn btn-primary" onclick="openBookingModal(1)">Записаться</button>
+                        <button class="btn btn-outline" onclick="viewTeacherProfile(1)">Профиль</button>
+                    </div>
+                </div>
+
+                <!-- Алексей Козлов -->
+                <div class="teacher-card">
+                    <div class="teacher-card-header">
+                        <div class="teacher-avatar">
+                            <img src="img/АлексейКозлов.png" alt="Алексей Козлов" onerror="this.src='https://ui-avatars.com/api/?name=Алексей+Козлов&background=2a6f97&color=fff&size=400'">
+                        </div>
+                        <div class="teacher-info">
+                            <h2 class="teacher-name">Алексей Козлов</h2>
+                            <p class="teacher-subjects">Физика, Математика</p>
+                        </div>
+                    </div>
+                    <div class="teacher-stats">
+                        <div class="teacher-stat">
+                            <div class="stat-value">7 лет</div>
+                            <div class="stat-label">Опыт</div>
+                        </div>
+                        <div class="teacher-stat">
+                            <div class="stat-value">290+</div>
+                            <div class="stat-label">Учеников</div>
+                        </div>
+                    </div>
+                    <p class="teacher-description">Преподаватель вуза. Специализация подготовка к ЕГЭ и олимпиадам по физике.</p>
+                    <div class="teacher-actions">
+                        <button class="btn btn-primary" onclick="openBookingModal(2)">Записаться</button>
+                        <button class="btn btn-outline" onclick="viewTeacherProfile(2)">Профиль</button>
+                    </div>
+                </div>
+
+                <!-- Иван Сидоров -->
+                <div class="teacher-card">
+                    <div class="teacher-card-header">
+                        <div class="teacher-avatar">
+                            <img src="img/ИванСидоров.jpg" alt="Иван Сидоров" onerror="this.src='https://ui-avatars.com/api/?name=Иван+Сидоров&background=014f86&color=fff&size=400'">
+                        </div>
+                        <div class="teacher-info">
+                            <h2 class="teacher-name">Иван Сидоров</h2>
+                            <p class="teacher-subjects">Английский язык</p>
+                        </div>
+                    </div>
+                    <div class="teacher-stats">
+                        <div class="teacher-stat">
+                            <div class="stat-value">6 лет</div>
+                            <div class="stat-label">Опыт</div>
+                        </div>
+                        <div class="teacher-stat">
+                            <div class="stat-value">420+</div>
+                            <div class="stat-label">Учеников</div>
+                        </div>
+                    </div>
+                    <p class="teacher-description">Сертифицированный специалист с международным опытом. Подготовка к IELTS, TOEFL.</p>
+                    <div class="teacher-actions">
+                        <button class="btn btn-primary" onclick="openBookingModal(3)">Записаться</button>
+                        <button class="btn btn-outline" onclick="viewTeacherProfile(3)">Профиль</button>
+                    </div>
+                </div>
+
+                <!-- Елена Смирнова -->
+                <div class="teacher-card">
+                    <div class="teacher-card-header">
+                        <div class="teacher-avatar">
+                            <img src="img/Елена Смирнова.jpg" alt="Елена Смирнова" onerror="this.src='https://ui-avatars.com/api/?name=Елена+Смирнова&background=468faf&color=fff&size=400'">
+                        </div>
+                        <div class="teacher-info">
+                            <h2 class="teacher-name">Елена Смирнова</h2>
+                            <p class="teacher-subjects">Химия, Биология</p>
+                        </div>
+                    </div>
+                    <div class="teacher-stats">
+                        <div class="teacher-stat">
+                            <div class="stat-value">9 лет</div>
+                            <div class="stat-label">Опыт</div>
+                        </div>
+                        <div class="teacher-stat">
+                            <div class="stat-value">320+</div>
+                            <div class="stat-label">Учеников</div>
+                        </div>
+                    </div>
+                    <p class="teacher-description">Кандидат химических наук. Авторская методика подготовки к ЕГЭ и олимпиадам.</p>
+                    <div class="teacher-actions">
+                        <button class="btn btn-primary" onclick="openBookingModal(4)">Записаться</button>
+                        <button class="btn btn-outline" onclick="viewTeacherProfile(4)">Профиль</button>
+                    </div>
+                </div>
+
+                <!-- Мария Иванова -->
+                <div class="teacher-card">
+                    <div class="teacher-card-header">
+                        <div class="teacher-avatar">
+                            <img src="img/МарияИванова.png" alt="Мария Иванова" onerror="this.src='https://ui-avatars.com/api/?name=Мария+Иванова&background=013a63&color=fff&size=400'">
+                        </div>
+                        <div class="teacher-info">
+                            <h2 class="teacher-name">Мария Иванова</h2>
+                            <p class="teacher-subjects">Русский язык, Литература</p>
+                        </div>
+                    </div>
+                    <div class="teacher-stats">
+                        <div class="teacher-stat">
+                            <div class="stat-value">10 лет</div>
+                            <div class="stat-label">Опыт</div>
+                        </div>
+                        <div class="teacher-stat">
+                            <div class="stat-value">380+</div>
+                            <div class="stat-label">Учеников</div>
+                        </div>
+                    </div>
+                    <p class="teacher-description">Эксперт ЕГЭ по русскому языку. Автор учебных пособий для подготовки к экзаменам.</p>
+                    <div class="teacher-actions">
+                        <button class="btn btn-primary" onclick="openBookingModal(5)">Записаться</button>
+                        <button class="btn btn-outline" onclick="viewTeacherProfile(5)">Профиль</button>
+                    </div>
+                </div>
+
+                <!-- Дмитрий Попов -->
+                <div class="teacher-card">
+                    <div class="teacher-card-header">
+                        <div class="teacher-avatar">
+                            <img src="img/Дмитрий Попов.jpg" alt="Дмитрий Попов" onerror="this.src='https://ui-avatars.com/api/?name=Дмитрий+Попов&background=012a4a&color=fff&size=400'">
+                        </div>
+                        <div class="teacher-info">
+                            <h2 class="teacher-name">Дмитрий Попов</h2>
+                            <p class="teacher-subjects">Программирование, Математика</p>
+                        </div>
+                    </div>
+                    <div class="teacher-stats">
+                        <div class="teacher-stat">
+                            <div class="stat-value">5 лет</div>
+                            <div class="stat-label">Опыт</div>
+                        </div>
+                        <div class="teacher-stat">
+                            <div class="stat-value">450+</div>
+                            <div class="stat-label">Учеников</div>
+                        </div>
+                    </div>
+                    <p class="teacher-description">Senior разработчик. Преподаваю Python, JavaScript, алгоритмы и структуры данных.</p>
+                    <div class="teacher-actions">
+                        <button class="btn btn-primary" onclick="openBookingModal(6)">Записаться</button>
+                        <button class="btn btn-outline" onclick="viewTeacherProfile(6)">Профиль</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Таблица баланса репетиторов -->
+            <div class="balance-table" id="balanceTableSection" style="margin-top: 4rem;">
+                <div class="balance-table-header">
+                    <h2><i class="fas fa-money-bill-wave"></i> Финансовые балансы репетиторов</h2>
+                    <p style="margin-top: 0.5rem; color: var(--muted-fg);">Управление балансами и выплатами</p>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Репетитор</th>
+                            <th>Предметы</th>
+                            <th>Баланс</th>
+                            <th>Статус</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tutorsBalanceTable">
+                        <tr>
+                            <td>1</td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <img src="img/АннаПетрова.jpg" alt="Анна Петрова" class="teacher-avatar-img" onerror="this.src='https://ui-avatars.com/api/?name=Анна+Петрова&background=01497c&color=fff&size=400'">
+                                    <div>
+                                        <strong>Анна Петрова</strong><br>
+                                        <small style="color: var(--muted-fg);">anna@ucheba-vmeste.ru</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Математика, Физика</td>
+                            <td class="balance-cell balance-positive">45,000 ₽</td>
+                            <td><span class="status-badge status-active">Активен</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-balance" onclick="manageUserBalance(1, 'tutor')">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                    </button>
+                                    <button class="btn btn-history" onclick="showUserOperations(1, 'tutor')">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <img src="img/АлексейКозлов.png" alt="Алексей Козлов" class="teacher-avatar-img" onerror="this.src='https://ui-avatars.com/api/?name=Алексей+Козлов&background=2a6f97&color=fff&size=400'">
+                                    <div>
+                                        <strong>Алексей Козлов</strong><br>
+                                        <small style="color: var(--muted-fg);">alexey@ucheba-vmeste.ru</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Физика, Математика</td>
+                            <td class="balance-cell balance-positive">38,500 ₽</td>
+                            <td><span class="status-badge status-active">Активен</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-balance" onclick="manageUserBalance(2, 'tutor')">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                    </button>
+                                    <button class="btn btn-history" onclick="showUserOperations(2, 'tutor')">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <img src="img/ИванСидоров.jpg" alt="Иван Сидоров" class="teacher-avatar-img" onerror="this.src='https://ui-avatars.com/api/?name=Иван+Сидоров&background=014f86&color=fff&size=400'">
+                                    <div>
+                                        <strong>Иван Сидоров</strong><br>
+                                        <small style="color: var(--muted-fg);">ivan@ucheba-vmeste.ru</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Английский язык</td>
+                            <td class="balance-cell balance-positive">52,300 ₽</td>
+                            <td><span class="status-badge status-active">Активен</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-balance" onclick="manageUserBalance(3, 'tutor')">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                    </button>
+                                    <button class="btn btn-history" onclick="showUserOperations(3, 'tutor')">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <img src="img/Елена Смирнова.jpg" alt="Елена Смирнова" class="teacher-avatar-img" onerror="this.src='https://ui-avatars.com/api/?name=Елена+Смирнова&background=468faf&color=fff&size=400'">
+                                    <div>
+                                        <strong>Елена Смирнова</strong><br>
+                                        <small style="color: var(--muted-fg);">elena@ucheba-vmeste.ru</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Химия, Биология</td>
+                            <td class="balance-cell balance-positive">41,200 ₽</td>
+                            <td><span class="status-badge status-active">Активен</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-balance" onclick="manageUserBalance(4, 'tutor')">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                    </button>
+                                    <button class="btn btn-history" onclick="showUserOperations(4, 'tutor')">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="balance-actions">
+                    <button class="btn btn-primary" onclick="exportBalanceReport('tutors')">
+                        <i class="fas fa-download"></i> Экспорт отчета
+                    </button>
+                    <button class="btn btn-outline" onclick="showBalanceStats()">
+                        <i class="fas fa-chart-pie"></i> Статистика
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Modal -->
+    <div class="modal" id="bookingModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="bookingTeacherName">Запись на урок</h2>
+                <button class="modal-close" onclick="closeModal('bookingModal')">×</button>
+            </div>
+            <form id="bookingForm">
+                <input type="hidden" id="selectedTeacherId">
+                <div class="form-group">
+                    <label for="bookingDate">Дата урока</label>
+                    <input type="date" id="bookingDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="bookingTime">Время урока</label>
+                    <select id="bookingTime" required>
+                        <option value="">Выберите время</option>
+                        <option value="09:00-10:00">09:00 - 10:00</option>
+                        <option value="10:30-11:30">10:30 - 11:30</option>
+                        <option value="12:00-13:00">12:00 - 13:00</option>
+                        <option value="14:00-15:00">14:00 - 15:00</option>
+                        <option value="16:00-17:00">16:00 - 17:00</option>
+                        <option value="18:00-19:00">18:00 - 19:00</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="bookingSubject">Предмет</label>
+                    <input type="text" id="bookingSubject" required>
+                </div>
+                <div class="form-group">
+                    <label for="bookingNotes">Дополнительные пожелания</label>
+                    <textarea id="bookingNotes" rows="3" placeholder="Укажите темы, которые хотите изучить..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Забронировать урок</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Balance Management Modal -->
+    <div class="modal" id="balanceModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-money-bill-wave"></i> Управление балансом</h2>
+                <button class="modal-close" onclick="closeModal('balanceModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="balance-info">
+                    <p><strong>Пользователь:</strong> <span id="balanceUserName">-</span></p>
+                    <p><strong>Текущий баланс:</strong> <span id="currentUserBalance" class="balance-positive">0 ₽</span></p>
+                </div>
+                
+                <form id="balanceForm">
+                    <input type="hidden" id="balanceUserId">
+                    <input type="hidden" id="balanceUserType">
+                    
+                    <div class="form-group">
+                        <label for="operationType">Тип операции</label>
+                        <select id="operationType" class="form-control">
+                            <option value="add">Пополнение</option>
+                            <option value="subtract">Списание</option>
+                            <option value="bonus">Бонус</option>
+                            <option value="salary">Зарплата</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="amount">Сумма (₽)</label>
+                        <input type="number" id="amount" class="form-control" min="1" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="comment">Комментарий</label>
+                        <textarea id="comment" class="form-control" rows="3" placeholder="Причина операции..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('balanceModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="processBalanceOperation()">Выполнить операцию</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Operations History Modal -->
+    <div class="modal" id="operationsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>История операций</h2>
+                <button class="modal-close" onclick="closeModal('operationsModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="operationsModalContent">
+                    <div style="text-align: center; padding: 2rem;">
+                        <i class="fas fa-history" style="font-size: 3rem; color: var(--muted-fg); margin-bottom: 1rem;"></i>
+                        <h3>История операций</h3>
+                        <p>Здесь будет отображаться история всех финансовых операций</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('operationsModal')">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h4>УчебаВместе</h4>
+                    <p>Онлайн репетиторский сервис с лучшими преподавателями. Помогаем достигать учебных целей с 2020 года.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Навигация</h4>
+                    <ul>
+                        <li><a href="index.html">Главная</a></li>
+                        <li><a href="index.html#subjects">Предметы</a></li>
+                        <li><a href="teacher.html">Репетиторы</a></li>
+                        <li><a href="profile.html">Личный кабинет</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Контакты</h4>
+                    <ul>
+                        <li>📞 +7 (999) 123-45-67</li>
+                        <li>✉️ info@ucheba-vmeste.ru</li>
+                        <li>🕒 Ежедневно 9:00-21:00</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 УчебаВместе. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/teacher.js"></script>
+    <script src="js/balance_functions.js"></script>
+    
+    <script>
+        // Простые функции для демонстрации
+        function manageUserBalance(userId, userType) {
+            // В реальном приложении здесь будет запрос к серверу
+            const userNames = {
+                1: 'Анна Петрова',
+                2: 'Алексей Козлов',
+                3: 'Иван Сидоров',
+                4: 'Елена Смирнова'
+            };
+            
+            document.getElementById('balanceUserName').textContent = userNames[userId] || 'Пользователь';
+            document.getElementById('balanceUserId').value = userId;
+            document.getElementById('balanceUserType').value = userType;
+            
+            // Демо-балансы
+            const demoBalances = {
+                1: 45000,
+                2: 38500,
+                3: 52300,
+                4: 41200
+            };
+            
+            document.getElementById('currentUserBalance').textContent = 
+                (demoBalances[userId] || 0).toLocaleString('ru-RU') + ' ₽';
+            
+            document.getElementById('balanceModal').style.display = 'block';
+        }
+        
+        function showUserOperations(userId, userType) {
+            document.getElementById('operationsModal').style.display = 'block';
+        }
+        
+        function processBalanceOperation() {
+            const userId = document.getElementById('balanceUserId').value;
+            const userType = document.getElementById('balanceUserType').value;
+            const operationType = document.getElementById('operationType').value;
+            const amount = document.getElementById('amount').value;
+            const comment = document.getElementById('comment').value;
+            
+            alert(`Операция выполнена!\nТип: ${operationType}\nСумма: ${amount} ₽\nКомментарий: ${comment}`);
+            closeModal('balanceModal');
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        function exportBalanceReport(type) {
+            alert(`Отчет по ${type} будет экспортирован`);
+        }
+        
+        function showBalanceStats() {
+            alert('Статистика балансов будет показана');
+        }
+    </script>
+</body>
+</html>

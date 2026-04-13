@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель репетитора - УчебаВместе</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Стили для баланса репетитора */
+        .tutor-balance-card {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
+        }
+        
+        .tutor-balance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .tutor-balance-header h3 {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+        
+        .tutor-balance-amount {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        
+        .tutor-balance-subtitle {
+            opacity: 0.9;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tutor-balance-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .tutor-balance-stat {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+        
+        .tutor-balance-stat-value {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+        
+        .tutor-balance-stat-label {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+        
+        .tutor-balance-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+        
+        .btn-balance-tutor {
+            background: white;
+            color: #1e40af;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-balance-tutor:hover {
+            background: #f8fafc;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-balance-outline-tutor {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-balance-outline-tutor:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .payouts-section {
+            background: var(--card);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border: 1px solid var(--border);
+        }
+        
+        .payouts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .payouts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .payout-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--bg);
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+        }
+        
+        .payout-status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-paid {
+            background: #dcfce7;
+            color: #15803d;
+        }
+        
+        .status-cancelled {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+        
+        .payout-details {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .payout-date {
+            color: var(--muted-fg);
+            font-size: 0.9rem;
+        }
+        
+        .payout-amount {
+            font-weight: 600;
+            color: var(--fg);
+        }
+        
+        .empty-payouts {
+            text-align: center;
+            padding: 2rem;
+            color: var(--muted-fg);
+        }
+        
+        .empty-payouts i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        .commission-info {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .commission-info p {
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html" class="logo-link">УчебаВместе</a>
+                </div>
+                <nav>
+                    <a href="index.html#subjects">Предметы</a>
+                    <a href="teacher.html">Репетиторы</a>
+                </nav>
+                <div class="header-actions">
+                    <button class="theme-toggle" id="themeToggle" aria-label="Переключить тему">
+                        <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                    <div id="userAuthSection">
+                        <div class="user-balance-header">
+                            <span class="balance-amount">85,000 ₽</span>
+                            <button class="btn btn-balance btn-sm" onclick="manageUserBalance(2, 'tutor')">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Teacher Dashboard -->
+    <section class="teacher-dashboard">
+        <div class="container">
+            <div class="dashboard-grid">
+                <!-- Sidebar -->
+                <div class="teacher-sidebar">
+                    <div class="sidebar-avatar">
+                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face" alt="Анна Петрова" onerror="this.src='https://ui-avatars.com/api/?name=Анна+Петрова&background=01497c&color=fff&size=400'">
+                    </div>
+                    <div class="sidebar-info">
+                        <h3 id="teacherName">Анна Петрова</h3>
+                        <div class="sidebar-role" id="teacherRole">Репетитор по математике и физике</div>
+                    </div>
+                    
+                    <div class="teacher-stats">
+                        <div class="teacher-stat-item">
+                            <div class="teacher-stat-value" id="totalStudents">45</div>
+                            <div class="teacher-stat-label">Учеников</div>
+                        </div>
+                        <div class="teacher-stat-item">
+                            <div class="teacher-stat-value" id="totalLessons">320</div>
+                            <div class="teacher-stat-label">Уроков</div>
+                        </div>
+                        <div class="teacher-stat-item">
+                            <div class="teacher-stat-value">4.9</div>
+                            <div class="teacher-stat-label">Рейтинг</div>
+                        </div>
+                        <div class="teacher-stat-item">
+                            <div class="teacher-stat-value" id="monthEarnings">85,000 ₽</div>
+                            <div class="teacher-stat-label">Баланс</div>
+                        </div>
+                    </div>
+                    
+                    <div class="teacher-quick-actions">
+                        <a href="#schedule" class="quick-action-btn">
+                            <i class="fas fa-calendar-alt"></i>
+                            Расписание
+                        </a>
+                        <a href="#students" class="quick-action-btn">
+                            <i class="fas fa-users"></i>
+                            Мои ученики
+                        </a>
+                        <a href="#earnings" class="quick-action-btn">
+                            <i class="fas fa-chart-line"></i>
+                            Финансы
+                        </a>
+                        <a href="#balance" class="quick-action-btn">
+                            <i class="fas fa-money-bill-wave"></i>
+                            Баланс и выплаты
+                        </a>
+                        <a href="#materials" class="quick-action-btn">
+                            <i class="fas fa-book"></i>
+                            Материалы
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="teacher-main-content">
+                    <!-- Карточка баланса репетитора -->
+                    <div class="tutor-balance-card" id="balance">
+                        <div class="tutor-balance-header">
+                            <h3><i class="fas fa-money-bill-wave"></i> Мой баланс</h3>
+                            <button class="btn-balance-outline-tutor" onclick="showUserOperations(2, 'tutor')">
+                                <i class="fas fa-history"></i> История
+                            </button>
+                        </div>
+                        
+                        <div class="tutor-balance-amount" id="tutorBalanceAmount">85,000 ₽</div>
+                        <div class="tutor-balance-subtitle">Доступно для вывода</div>
+                        
+                        <div class="tutor-balance-stats">
+                            <div class="tutor-balance-stat">
+                                <div class="tutor-balance-stat-value" id="tutorThisMonth">25,000 ₽</div>
+                                <div class="tutor-balance-stat-label">За декабрь</div>
+                            </div>
+                            <div class="tutor-balance-stat">
+                                <div class="tutor-balance-stat-value" id="tutorPending">15,000 ₽</div>
+                                <div class="tutor-balance-stat-label">Ожидает</div>
+                            </div>
+                            <div class="tutor-balance-stat">
+                                <div class="tutor-balance-stat-value" id="tutorAvgLesson">2,500 ₽</div>
+                                <div class="tutor-balance-stat-label">Средний урок</div>
+                            </div>
+                        </div>
+                        
+                        <div class="tutor-balance-actions">
+                            <button class="btn-balance-tutor" onclick="requestPayout()">
+                                <i class="fas fa-credit-card"></i> Заказать выплату
+                            </button>
+                            <button class="btn-balance-outline-tutor" onclick="manageUserBalance(2, 'tutor')">
+                                <i class="fas fa-cog"></i> Управление
+                            </button>
+                        </div>
+                        
+                        <div class="commission-info">
+                            <p><i class="fas fa-info-circle"></i> Комиссия сервиса: 15% с каждого урока</p>
+                            <p>Минимальная сумма для вывода: 3,000 ₽</p>
+                        </div>
+                    </div>
+
+                    <!-- Upcoming Lessons -->
+                    <div class="admin-control-card">
+                        <h3>Ближайшие уроки</h3>
+                        <div class="lessons-grid" id="upcomingLessons">
+                            <!-- Lessons will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Выплаты -->
+                    <div class="payouts-section">
+                        <div class="payouts-header">
+                            <h3><i class="fas fa-credit-card"></i> История выплат</h3>
+                            <button class="btn btn-primary btn-sm" onclick="requestPayout()">
+                                <i class="fas fa-plus"></i> Новая выплата
+                            </button>
+                        </div>
+                        
+                        <div class="payouts-list" id="payoutsList">
+                            <div class="payout-item">
+                                <div class="payout-details">
+                                    <div>
+                                        <strong>Выплата #12345</strong>
+                                        <div class="payout-date">15 декабря 2024</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="payout-amount">50,000 ₽</span>
+                                    <span class="payout-status status-paid">Выплачено</span>
+                                </div>
+                            </div>
+                            
+                            <div class="payout-item">
+                                <div class="payout-details">
+                                    <div>
+                                        <strong>Выплата #12344</strong>
+                                        <div class="payout-date">30 ноября 2024</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="payout-amount">45,000 ₽</span>
+                                    <span class="payout-status status-paid">Выплачено</span>
+                                </div>
+                            </div>
+                            
+                            <div class="payout-item">
+                                <div class="payout-details">
+                                    <div>
+                                        <strong>Запрос на выплату</strong>
+                                        <div class="payout-date">Ожидает обработки</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="payout-amount">15,000 ₽</span>
+                                    <span class="payout-status status-pending">Ожидание</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="empty-payouts" id="emptyPayouts" style="display: none;">
+                            <i class="fas fa-wallet"></i>
+                            <h4>Выплат пока нет</h4>
+                            <p>После проведения уроков вы сможете запросить выплату средств</p>
+                        </div>
+                    </div>
+
+                    <!-- Schedule -->
+                    <div class="schedule-calendar" id="schedule">
+                        <div class="calendar-header">
+                            <h3>Расписание на неделю</h3>
+                            <div class="calendar-nav">
+                                <button class="btn btn-sm btn-outline" onclick="prevWeek()">←</button>
+                                <span id="currentWeek">11-17 Декабря 2024</span>
+                                <button class="btn btn-sm btn-outline" onclick="nextWeek()">→</button>
+                            </div>
+                        </div>
+                        <div class="calendar-week">
+                            <div class="week-day">Пн</div>
+                            <div class="week-day">Вт</div>
+                            <div class="week-day">Ср</div>
+                            <div class="week-day">Чт</div>
+                            <div class="week-day">Пт</div>
+                            <div class="week-day">Сб</div>
+                            <div class="week-day">Вс</div>
+                        </div>
+                        <div class="calendar-slots" id="weeklySchedule">
+                            <!-- Time slots will be generated here -->
+                        </div>
+                    </div>
+
+                    <!-- Students -->
+                    <div class="admin-control-card" id="students">
+                        <div class="calendar-header">
+                            <h3>Мои ученики</h3>
+                            <button class="btn btn-primary btn-sm" onclick="exportStudents()">Экспорт списка</button>
+                        </div>
+                        <div class="students-list-grid" id="studentsList">
+                            <!-- Students will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Earnings -->
+                    <div class="earnings-chart" id="earnings">
+                        <div class="chart-header">
+                            <h3>Статистика доходов</h3>
+                            <select id="earningsPeriod" class="form-control" style="width: auto;">
+                                <option value="month">Этот месяц</option>
+                                <option value="quarter">Квартал</option>
+                                <option value="year">Год</option>
+                            </select>
+                        </div>
+                        <div class="chart-container" id="earningsChart">
+                            <!-- Chart will be generated here -->
+                            <div style="display: flex; align-items: flex-end; height: 100%; gap: 20px; padding: 20px;">
+                                <div style="flex: 1; background: var(--primary); height: 80%; border-radius: 4px;"></div>
+                                <div style="flex: 1; background: var(--primary); height: 65%; border-radius: 4px;"></div>
+                                <div style="flex: 1; background: var(--primary); height: 90%; border-radius: 4px;"></div>
+                                <div style="flex: 1; background: var(--primary); height: 55%; border-radius: 4px;"></div>
+                                <div style="flex: 1; background: var(--primary); height: 75%; border-radius: 4px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Balance Management Modal -->
+    <div class="modal" id="balanceModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-money-bill-wave"></i> Управление балансом</h2>
+                <button class="modal-close" onclick="closeModal('balanceModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="balance-info">
+                    <p><strong>Пользователь:</strong> <span id="balanceUserName">Анна Петрова</span></p>
+                    <p><strong>Текущий баланс:</strong> <span id="currentUserBalance" class="balance-positive">85,000 ₽</span></p>
+                    <p><strong>Роль:</strong> <span id="balanceUserRole">Репетитор</span></p>
+                </div>
+                
+                <form id="balanceForm">
+                    <input type="hidden" id="balanceUserId" value="2">
+                    <input type="hidden" id="balanceUserType" value="tutor">
+                    
+                    <div class="form-group">
+                        <label for="operationType">Тип операции</label>
+                        <select id="operationType" class="form-control">
+                            <option value="salary">Выплата зарплаты</option>
+                            <option value="bonus">Бонус</option>
+                            <option value="correction">Корректировка</option>
+                            <option value="refund">Возврат</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="amount">Сумма (₽)</label>
+                        <input type="number" id="amount" class="form-control" min="1" required value="10000">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="comment">Комментарий</label>
+                        <textarea id="comment" class="form-control" rows="3" placeholder="Причина операции...">Выплата за декабрь</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="payoutMethod">Способ выплаты</label>
+                        <select id="payoutMethod" class="form-control">
+                            <option value="bank">Банковская карта</option>
+                            <option value="yoomoney">ЮMoney</option>
+                            <option value="sberbank">Сбербанк Онлайн</option>
+                            <option value="qiwi">QIWI</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('balanceModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="processBalanceOperation()">Выполнить операцию</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Operations History Modal -->
+    <div class="modal" id="operationsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>История операций</h2>
+                <button class="modal-close" onclick="closeModal('operationsModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="operationsModalContent">
+                    <div style="text-align: center; padding: 2rem;">
+                        <i class="fas fa-history" style="font-size: 3rem; color: var(--muted-fg); margin-bottom: 1rem;"></i>
+                        <h3>История операций репетитора</h3>
+                        <p>Загрузка истории операций...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('operationsModal')">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payout Request Modal -->
+    <div class="modal" id="payoutModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-credit-card"></i> Запрос выплаты</h2>
+                <button class="modal-close" onclick="closeModal('payoutModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="balance-info">
+                    <p><strong>Доступно для вывода:</strong> <span class="balance-positive">85,000 ₽</span></p>
+                    <p><strong>Минимальная сумма:</strong> <span>3,000 ₽</span></p>
+                </div>
+                
+                <form id="payoutForm">
+                    <div class="form-group">
+                        <label for="payoutAmount">Сумма выплаты (₽)</label>
+                        <input type="number" id="payoutAmount" class="form-control" min="3000" max="85000" value="85000" required>
+                        <small>Минимум: 3,000 ₽, Максимум: 85,000 ₽</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="payoutMethodRequest">Способ получения</label>
+                        <select id="payoutMethodRequest" class="form-control" required>
+                            <option value="">Выберите способ</option>
+                            <option value="bank_card">Банковская карта</option>
+                            <option value="sberbank">Сбербанк Онлайн</option>
+                            <option value="yoomoney">ЮMoney</option>
+                            <option value="qiwi">QIWI Кошелек</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="payoutDetails">Реквизиты для выплаты</label>
+                        <textarea id="payoutDetails" class="form-control" rows="3" placeholder="Номер карты/счета, ФИО получателя..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="payoutComment">Комментарий (необязательно)</label>
+                        <input type="text" id="payoutComment" class="form-control" placeholder="Например: выплата за декабрь">
+                    </div>
+                    
+                    <div class="commission-info" style="margin-top: 1rem;">
+                        <p><i class="fas fa-info-circle"></i> Комиссия сервиса за вывод: 1.5% (минимум 50 ₽)</p>
+                        <p><strong>К получению:</strong> <span id="payoutNetAmount">83,725 ₽</span></p>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('payoutModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="submitPayoutRequest()">Запросить выплату</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lesson Details Modal -->
+    <div class="modal" id="lessonDetailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Детали урока</h2>
+                <button class="modal-close" onclick="closeModal('lessonDetailsModal')">×</button>
+            </div>
+            <div id="lessonDetailsContent">
+                <!-- Lesson details will be loaded here -->
+            </div>
+            <div class="teacher-actions" id="lessonActions">
+                <!-- Action buttons will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Lesson Modal -->
+    <div class="modal" id="cancelLessonModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Отмена урока</h2>
+                <button class="modal-close" onclick="closeModal('cancelLessonModal')">×</button>
+            </div>
+            <form id="cancelLessonForm">
+                <input type="hidden" id="cancelLessonId">
+                <div class="form-group">
+                    <label for="cancelReason">Причина отмены</label>
+                    <textarea id="cancelReason" rows="4" placeholder="Укажите причину отмены урока..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="notifyStudent" checked>
+                        Уведомить ученика по email
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-danger btn-full">Отменить урок</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/teacher_dashboard.js"></script>
+    
+    <script>
+        // Простые функции для управления балансом репетитора
+        let tutorBalance = 85000;
+        
+        function manageUserBalance(userId, userType) {
+            document.getElementById('balanceModal').style.display = 'block';
+        }
+        
+        function showUserOperations(userId, userType) {
+            document.getElementById('operationsModal').style.display = 'block';
+        }
+        
+        function requestPayout() {
+            document.getElementById('payoutModal').style.display = 'block';
+            
+            // Рассчитать чистую сумму после комиссии
+            const amount = document.getElementById('payoutAmount').value;
+            const commission = amount * 0.015;
+            const netAmount = amount - Math.max(commission, 50);
+            
+            document.getElementById('payoutNetAmount').textContent = 
+                netAmount.toLocaleString('ru-RU') + ' ₽';
+        }
+        
+        function submitPayoutRequest() {
+            const amount = document.getElementById('payoutAmount').value;
+            const method = document.getElementById('payoutMethodRequest').value;
+            const details = document.getElementById('payoutDetails').value;
+            
+            if (!method) {
+                alert('Выберите способ получения');
+                return;
+            }
+            
+            if (!details) {
+                alert('Введите реквизиты для выплаты');
+                return;
+            }
+            
+            alert(`Запрос на выплату ${amount} ₽ отправлен!\nСпособ: ${method}\nРеквизиты: ${details}`);
+            closeModal('payoutModal');
+            
+            // Обновить баланс
+            tutorBalance -= parseInt(amount);
+            document.getElementById('tutorBalanceAmount').textContent = 
+                tutorBalance.toLocaleString('ru-RU') + ' ₽';
+        }
+        
+        function processBalanceOperation() {
+            const operationType = document.getElementById('operationType').value;
+            const amount = document.getElementById('amount').value;
+            const comment = document.getElementById('comment').value;
+            
+            alert(`Операция "${operationType}" на сумму ${amount} ₽ выполнена!\nКомментарий: ${comment}`);
+            closeModal('balanceModal');
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        // Расчет комиссии при изменении суммы выплаты
+        document.addEventListener('DOMContentLoaded', function() {
+            const payoutAmountInput = document.getElementById('payoutAmount');
+            if (payoutAmountInput) {
+                payoutAmountInput.addEventListener('input', function() {
+                    const amount = this.value;
+                    const commission = amount * 0.015;
+                    const netAmount = amount - Math.max(commission, 50);
+                    
+                    document.getElementById('payoutNetAmount').textContent = 
+                        netAmount.toLocaleString('ru-RU') + ' ₽';
+                });
+            }
+            
+            // Добавим стили для user-balance-header
+            const style = document.createElement('style');
+            style.textContent = `
+                .user-balance-header {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    margin-right: 1rem;
+                }
+                .balance-amount {
+                    font-weight: 600;
+                    color: var(--primary);
+                }
+                .btn-balance {
+                    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                    color: white;
+                    border: none;
+                    padding: 0.5rem 1rem;
+                    border-radius: 0.5rem;
+                    cursor: pointer;
+                }
+                .btn-balance:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+                }
+            `;
+            document.head.appendChild(style);
+        });
+        
+        // Закрытие модальных окон при клике вне их
+        window.onclick = function(event) {
+            const modals = ['balanceModal', 'operationsModal', 'payoutModal', 'lessonDetailsModal', 'cancelLessonModal'];
+            modals.forEach(modalId => {
+                const modal = document.getElementById(modalId);
+                if (event.target === modal) {
+                    closeModal(modalId);
+                }
+            });
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Простая авторизация - Тест</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .success { color: green; background: #d4edda; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .error { color: red; background: #f8d7da; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .user-list { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0; }
+        .test-btn { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
+        .test-btn:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>Тест авторизации УчебаВместе</h1>
+    
+    <div id="status"></div>
+    
+    <h2>Быстрый вход:</h2>
+    <div>
+        <button class="test-btn" onclick="testLogin('admin', 'admin123')">Войти как Админ</button>
+        <button class="test-btn" onclick="testLogin('anna', 'anna123')">Войти как Анна (репетитор)</button>
+        <button class="test-btn" onclick="testLogin('student', 'student123')">Войти как Ученик</button>
+    </div>
+    
+    <h2>Список пользователей в системе:</h2>
+    <div id="userList" class="user-list"></div>
+    
+    <h2>Текущая сессия:</h2>
+    <div id="sessionInfo"></div>
+    
+    <div style="margin-top: 20px;">
+        <button class="test-btn" onclick="clearData()">Очистить все данные</button>
+        <button class="test-btn" onclick="createDemoUsers()">Создать демо-пользователей</button>
+        <button class="test-btn" onclick="checkAuth()">Проверить авторизацию</button>
+    </div>
+
+    <script>
+        // Простая функция для тестирования
+        function testLogin(login, password) {
+            const users = JSON.parse(localStorage.getItem('ucheba_users')) || [];
+            const user = users.find(u => u.login === login && u.password === password);
+            
+            if (user) {
+                const { password, ...userSession } = user;
+                localStorage.setItem('ucheba_current_user', JSON.stringify(userSession));
+                showStatus(`Успешный вход как ${user.firstName} ${user.lastName} (${user.role})`, 'success');
+                updateSessionInfo();
+                updateUserList();
+            } else {
+                showStatus('Ошибка: неверный логин или пароль', 'error');
+            }
+        }
+        
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="${type}">${message}</div>`;
+        }
+        
+        function updateSessionInfo() {
+            const session = JSON.parse(localStorage.getItem('ucheba_current_user'));
+            const sessionDiv = document.getElementById('sessionInfo');
+            
+            if (session) {
+                sessionDiv.innerHTML = `
+                    <div class="success">
+                        <strong>Активная сессия:</strong><br>
+                        Имя: ${session.firstName} ${session.lastName}<br>
+                        Email: ${session.email}<br>
+                        Роль: ${session.role}<br>
+                        ID: ${session.id}
+                    </div>
+                `;
+            } else {
+                sessionDiv.innerHTML = '<div class="error">Нет активной сессии</div>';
+            }
+        }
+        
+        function updateUserList() {
+            const users = JSON.parse(localStorage.getItem('ucheba_users')) || [];
+            const userListDiv = document.getElementById('userList');
+            
+            userListDiv.innerHTML = users.map(user => `
+                <div style="margin: 5px 0; padding: 5px; border-bottom: 1px solid #ddd;">
+                    <strong>${user.firstName} ${user.lastName}</strong> (${user.role})<br>
+                    Логин: ${user.login} | Пароль: ${user.password}<br>
+                    Email: ${user.email}
+                </div>
+            `).join('');
+        }
+        
+        function clearData() {
+            localStorage.clear();
+            showStatus('Все данные очищены', 'success');
+            updateSessionInfo();
+            updateUserList();
+        }
+        
+        function createDemoUsers() {
+            const demoUsers = [
+                { id: 1, firstName: 'Админ', lastName: 'Админов', email: 'admin@ucheba-vmeste.ru', login: 'admin', password: 'admin123', role: 'admin' },
+                { id: 2, firstName: 'Анна', lastName: 'Петрова', email: 'anna@ucheba-vmeste.ru', login: 'anna', password: 'anna123', role: 'tutor' },
+                { id: 3, firstName: 'Иван', lastName: 'Иванов', email: 'student@example.com', login: 'student', password: 'student123', role: 'student' }
+            ];
+            
+            localStorage.setItem('ucheba_users', JSON.stringify(demoUsers));
+            showStatus('Демо-пользователи созданы', 'success');
+            updateUserList();
+        }
+        
+        function checkAuth() {
+            const session = JSON.parse(localStorage.getItem('ucheba_current_user'));
+            const users = JSON.parse(localStorage.getItem('ucheba_users')) || [];
+            
+            showStatus(`Пользователей в системе: ${users.length}, Активная сессия: ${session ? 'Да' : 'Нет'}`, 'success');
+        }
+        
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSessionInfo();
+            updateUserList();
+            checkAuth();
+        });
+    </script>
+</body>
+</html>

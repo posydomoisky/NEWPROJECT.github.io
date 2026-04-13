@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест входа</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        input {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Тест входа</h2>
+    <input type="email" id="email" placeholder="Email" value="admin@ad.ru">
+    <input type="password" id="password" placeholder="Пароль" value="admin123">
+    <button onclick="login()">Войти</button>
+    
+    <div style="margin-top: 20px;">
+        <h3>Тестовые аккаунты:</h3>
+        <p><strong>Админ:</strong> admin@ad.ru / admin123</p>
+        <p><strong>Репетитор:</strong> tutor@mail.ru / tutor123</p>
+        <p><strong>Ученик:</strong> student@mail.ru / student123</p>
+    </div>
+
+    <script>
+        function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Тестовые пользователи
+            const testUsers = [
+                {
+                    id: 1,
+                    firstName: 'Админ',
+                    lastName: 'Админов',
+                    email: 'admin@ad.ru',
+                    password: 'admin123',
+                    user_type: 'admin'
+                },
+                {
+                    id: 2,
+                    firstName: 'Иван',
+                    lastName: 'Иванов',
+                    email: 'student@mail.ru',
+                    password: 'student123',
+                    user_type: 'student'
+                },
+                {
+                    id: 3,
+                    firstName: 'Александр',
+                    lastName: 'Смирнов',
+                    email: 'tutor@mail.ru',
+                    password: 'tutor123',
+                    user_type: 'tutor'
+                }
+            ];
+            
+            // Ищем пользователя
+            const user = testUsers.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                // Сохраняем пользователя
+                localStorage.setItem('ucheba_current_user', JSON.stringify(user));
+                alert('Успешно! Перенаправляем в профиль...');
+                window.location.href = 'profile.html';
+            } else {
+                alert('Неверный email или пароль');
+            }
+        }
+    </script>
+</body>
+</html>

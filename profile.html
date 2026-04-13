@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="ru"> 
+    <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Личный кабинет ученика - УчебаВместе</title>
+     <link rel="stylesheet" href="styles.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+       <style>
+        /* Дополнительные стили для профиля */
+         .profile-stats { 
+            display: grid;
+             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+             gap: 1rem; margin: 2rem 0; }
+        .stat-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        text-align: center;
+        transition: transform 0.3s;
+        position: relative;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px var(--shadow);
+    }
+    
+    .stat-card h3 {
+        font-size: 2rem;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-card p {
+        color: var(--muted-fg);
+        font-size: 0.9rem;
+    }
+    
+    .balance-badge {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background: #10b981;
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: bold;
+    }
+    
+    .balance-card {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .balance-card h2 {
+        font-size: 3rem;
+        margin: 0.5rem 0;
+    }
+    
+    .balance-card p {
+        opacity: 0.9;
+        margin-bottom: 1.5rem;
+    }
+    
+    .balance-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 1rem;
+    }
+    
+    .btn-balance {
+        background: white;
+        color: #1d4ed8;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    
+    .btn-balance:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+    }
+    
+    .btn-balance-outline {
+        background: transparent;
+        color: white;
+        border: 2px solid white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    
+    .btn-balance-outline:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .operations-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 2rem;
+        background: var(--card);
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+    
+    .operations-table th {
+        background: var(--bg);
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: var(--muted-fg);
+        border-bottom: 2px solid var(--border);
+    }
+    
+    .operations-table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border);
+    }
+    
+    .operation-positive {
+        color: #10b981;
+        font-weight: 600;
+    }
+    
+    .operation-negative {
+        color: #ef4444;
+        font-weight: 600;
+    }
+    
+    .operation-type {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    
+    .operation-add {
+        background: #dcfce7;
+        color: #15803d;
+    }
+    
+    .operation-subtract {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+    
+    .operation-bonus {
+        background: #fef3c7;
+        color: #92400e;
+    }
+    
+    .operation-salary {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+    
+    .tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin: 2rem 0;
+        flex-wrap: wrap;
+    }
+    
+    .tab {
+        padding: 0.75rem 1.5rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 500;
+    }
+    
+    .tab.active {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+    
+    .tab-content {
+        display: none;
+        animation: fadeIn 0.3s;
+    }
+    
+    .tab-content.active {
+        display: block;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    .tab-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    
+    .amount-buttons {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+        margin: 1.5rem 0;
+    }
+    
+    .amount-btn {
+        padding: 0.75rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .amount-btn:hover {
+        border-color: var(--primary);
+    }
+    
+    .amount-btn.selected {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+    
+    .custom-amount {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        background: var(--bg);
+        color: var(--fg);
+        font-size: 1rem;
+    }
+    
+    .lesson-details {
+        background: var(--bg);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin: 1rem 0;
+        border: 1px solid var(--border);
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    
+    .status-scheduled {
+        background: #dcfce7;
+        color: #15803d;
+    }
+    
+    .status-completed {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+    
+    .status-cancelled {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+    
+    .tutor-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 1.25rem;
+    }
+    
+    .rating-stars {
+        color: #fbbf24;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: var(--muted-fg);
+    }
+    
+    .empty-state svg {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 1rem;
+        color: var(--border);
+    }
+</style>
+</head> <body> <!-- Header --> <header> <div class="container"> <div class="header-content"> <div class="logo"> <a href="index.html" class="logo-link">УчебаВместе</a> </div> <nav> <a href="index.html#subjects">Предметы</a> <a href="teacher.html">Репетиторы</a> </nav> <div class="header-actions"> <button class="theme-toggle" id="themeToggle" aria-label="Переключить тему"> <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"> <circle cx="12" cy="12" r="5"></circle> <line x1="12" y1="1" x2="12" y2="3"></line> <line x1="12" y1="21" x2="12" y2="23"></line> <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line> <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line> <line x1="1" y1="12" x2="3" y2="12"></line> <line x1="21" y1="12" x2="23" y2="12"></line> <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line> <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line> </svg> <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path> </svg> </button> <div id="userAuthSection"> <div class="user-balance-header"> <span class="balance-amount">5,000 ₽</span> <button class="btn btn-balance btn-sm" onclick="manageUserBalance(3, 'student')"> <i class="fas fa-money-bill-wave"></i> </button> </div> <a href="login_simple.html" class="btn btn-primary">Войти</a> </div> </div> </div> </div> </header>
+
+   <!-- Profile Section -->
+<section class="profile-section">
+    <div class="container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-info">
+                <div class="profile-avatar" id="profileAvatar">ИИ</div>
+                <div class="profile-details">
+                    <h1 id="profileName">Иван Иванов</h1>
+                    <p id="profileRole">Ученик</p>
+                    <p id="profileEmail">student@example.com</p>
+                </div>
+            </div>
+            <div class="profile-actions">
+                <div class="balance-display">
+                    <span class="balance-label">Баланс:</span>
+                    <span class="balance-value">5,000 ₽</span>
+                </div>
+                <button class="btn btn-primary" onclick="bookNewLesson()">Записаться на урок</button>
+                <button class="btn btn-outline" onclick="editProfile()">Редактировать профиль</button>
+            </div>
+        </div>
+
+        <!-- Карточка баланса -->
+        <div class="balance-card">
+            <h2 id="studentBalance">5,000 ₽</h2>
+            <p>Доступно для оплаты уроков</p>
+            <div class="balance-actions">
+                <button class="btn-balance" onclick="showAddMoneyModal()">
+                    
+                    <i class="fas fa-plus-circle"></i> Пополнить баланс
+                </button>
+                <button class="btn-balance-outline" onclick="showUserOperations(3, 'student')">
+                    <i class="fas fa-history"></i> История операций
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="profile-stats">
+            <div class="stat-card">
+                <h3 id="totalLessonsCount">12</h3>
+                <p>Всего уроков</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="upcomingLessonsCount">3</h3>
+                <p>Предстоящих</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="completedLessonsCount">9</h3>
+                <p>Завершено</p>
+            </div>
+            <div class="stat-card">
+                <div class="balance-badge">Баланс</div>
+                <h3 id="totalBalance">5,000 ₽</h3>
+                <p>Доступно</p>
+                <button class="btn btn-balance btn-sm" onclick="manageUserBalance(3, 'student')" style="margin-top: 10px;">
+                    <i class="fas fa-money-bill-wave"></i> Управление
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('lessons')" id="lessonsTabBtn">
+                <i class="fas fa-book-open"></i>
+                Мои уроки
+            </button>
+            <button class="tab" onclick="switchTab('balance')" id="balanceTabBtn">
+                <i class="fas fa-money-bill-wave"></i>
+                Баланс и оплата
+            </button>
+            <button class="tab" onclick="switchTab('tutors')" id="tutorsTabBtn">
+                <i class="fas fa-users"></i>
+                Мои репетиторы
+            </button>
+            <button class="tab" onclick="switchTab('schedule')" id="scheduleTabBtn">
+                <i class="fas fa-calendar-alt"></i>
+                Расписание
+            </button>
+            <button class="tab" onclick="switchTab('reviews')" id="reviewsTabBtn">
+                <i class="fas fa-star"></i>
+                Отзывы
+            </button>
+        </div>
+
+        <!-- Tab Content: Мои уроки -->
+        <div class="tab-content active" id="lessonsTab">
+            <div class="tab-header">
+                <h2>Мои уроки</h2>
+                <div class="tab-actions">
+                    <select id="lessonFilter" onchange="filterLessons()" style="padding: 0.5rem; border-radius: 0.5rem; border: 1px solid var(--border); background: var(--bg); color: var(--fg);">
+                        <option value="all">Все уроки</option>
+                        <option value="scheduled">Предстоящие</option>
+                        <option value="completed">Завершенные</option>
+                        <option value="cancelled">Отмененные</option>
+                    </select>
+                    <button class="btn btn-primary btn-sm" onclick="refreshLessons()">Обновить</button>
+                </div>
+            </div>
+            <div class="lessons-grid" id="lessonsList">
+                <!-- Lessons will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Tab Content: Баланс и оплата -->
+        <div class="tab-content" id="balanceTab">
+            <div class="tab-header">
+                <h2>Баланс и оплата</h2>
+                <div class="tab-actions">
+                    <button class="btn btn-primary" onclick="showAddMoneyModal()"><!-- Модальное окно пополнения баланса -->
+<div class="modal" id="addMoneyModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-plus-circle"></i> Пополнение баланса</h2>
+            <button class="modal-close" onclick="closeModal('addMoneyModal')">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="balance-info">
+                <p><strong>Текущий баланс:</strong> <span class="balance-positive" id="currentBalanceDisplay">5,000 ₽</span></p>
+            </div>
+            
+            <h3 style="margin: 1.5rem 0 1rem;">Выберите сумму</h3>
+            <div class="amount-buttons" id="amountButtons">
+                <button class="amount-btn" onclick="selectAmount(500)">500 ₽</button>
+                <button class="amount-btn" onclick="selectAmount(1000)">1,000 ₽</button>
+                <button class="amount-btn" onclick="selectAmount(2000)">2,000 ₽</button>
+                <button class="amount-btn" onclick="selectAmount(3000)">3,000 ₽</button>
+                <button class="amount-btn selected" onclick="selectAmount(5000)">5,000 ₽</button>
+                <button class="amount-btn" onclick="selectAmount(10000)">10,000 ₽</button>
+            </div>
+            
+            <div style="margin: 1.5rem 0;">
+                <input type="number" class="custom-amount" id="customAmount" placeholder="Другая сумма" min="100" step="100" oninput="selectCustomAmount()">
+            </div>
+            
+            <div class="form-group" style="margin: 1.5rem 0;">
+                <label for="paymentMethod" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Способ оплаты</label>
+                <div class="payment-methods">
+                    <div class="payment-option" onclick="selectPaymentMethod('card')">
+                        <input type="radio" id="card" name="paymentMethod" value="card" checked>
+                        <label for="card">
+                            <i class="fas fa-credit-card"></i>
+                            <span>Банковская карта</span>
+                            <div class="payment-icons">
+                                <i class="fab fa-cc-visa"></i>
+                                <i class="fab fa-cc-mastercard"></i>
+                                <i class="fab fa-cc-mir"></i>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="payment-option" onclick="selectPaymentMethod('sbp')">
+                        <input type="radio" id="sbp" name="paymentMethod" value="sbp">
+                        <label for="sbp">
+                            <i class="fas fa-mobile-alt"></i>
+                            <span>СБП (Система быстрых платежей)</span>
+                        </label>
+                    </div>
+                    <div class="payment-option" onclick="selectPaymentMethod('yoomoney')">
+                        <input type="radio" id="yoomoney" name="paymentMethod" value="yoomoney">
+                        <label for="yoomoney">
+                            <i class="fas fa-wallet"></i>
+                            <span>ЮMoney (Яндекс.Деньги)</span>
+                        </label>
+                    </div>
+                    <div class="payment-option" onclick="selectPaymentMethod('qiwi')">
+                        <input type="radio" id="qiwi" name="paymentMethod" value="qiwi">
+                        <label for="qiwi">
+                            <i class="fas fa-qrcode"></i>
+                            <span>QIWI Кошелек</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="payment-summary" style="margin-top: 2rem; padding: 1.5rem; background: #f8fafc; border-radius: 0.5rem;">
+                <h4 style="margin-top: 0; margin-bottom: 1rem; color: var(--muted-fg);">Детали платежа</h4>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span>Сумма пополнения:</span>
+                    <span id="totalAmount" style="font-weight: bold; color: #10b981;">5,000 ₽</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span>Комиссия:</span>
+                    <span id="commissionAmount" style="color: #6b7280;">0 ₽</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; padding-top: 0.5rem; border-top: 1px solid var(--border);">
+                    <span style="font-weight: 600;">К оплате:</span>
+                    <span id="totalToPay" style="font-size: 1.25rem; font-weight: bold; color: #3b82f6;">5,000 ₽</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>Новый баланс:</span>
+                    <span id="newBalanceDisplay" style="font-size: 1.1rem; font-weight: bold; color: #059669;">10,000 ₽</span>
+                </div>
+            </div>
+            
+            <div style="margin-top: 1rem; padding: 0.75rem; background: #fef3c7; border-radius: 0.5rem; color: #92400e; font-size: 0.9rem;">
+                <i class="fas fa-info-circle"></i> Это демо-режим. В реальном приложении здесь будет подключение к платежной системе.
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('addMoneyModal')">Отмена</button>
+            <button class="btn btn-primary" onclick="processDemoPayment()">
+                <i class="fas fa-check-circle"></i> Оплатить
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .payment-methods {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .payment-option {
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .payment-option:hover {
+        border-color: var(--primary);
+        background: rgba(59, 130, 246, 0.05);
+    }
+    
+    .payment-option input[type="radio"] {
+        display: none;
+    }
+    
+    .payment-option label {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        cursor: pointer;
+        width: 100%;
+    }
+    
+    .payment-option input[type="radio"]:checked + label {
+        font-weight: 600;
+    }
+    
+    .payment-option input[type="radio"]:checked ~ label .payment-icons {
+        opacity: 1;
+    }
+    
+    .payment-option i {
+        font-size: 1.25rem;
+        color: var(--primary);
+        width: 24px;
+        text-align: center;
+    }
+    
+    .payment-option span {
+        flex-grow: 1;
+    }
+    
+    .payment-icons {
+        display: flex;
+        gap: 0.5rem;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+    
+    .payment-icons i {
+        font-size: 1.5rem;
+        color: var(--muted-fg);
+    }
+    
+    .payment-icons .fa-cc-visa { color: #1a1f71; }
+    .payment-icons .fa-cc-mastercard { color: #eb001b; }
+    .payment-icons .fa-cc-mir { color: #1e5aa8; }
+    
+    .payment-summary {
+        border: 1px solid var(--border);
+        background: var(--card);
+    }
+</style>
+
+<script>
+    let selectedAmount = 5000;
+    let currentBalance = 5000;
+    let selectedPaymentMethod = 'card';
+    
+    function showAddMoneyModal() {
+        // Получить текущий баланс пользователя
+        const currentUser = JSON.parse(localStorage.getItem('ucheba_current_user'));
+        if (currentUser) {
+            currentBalance = window.balanceManager.getUserBalance(currentUser.id) || 0;
+        }
+        
+        // Сбросить выбор
+        selectedAmount = 5000;
+        selectedPaymentMethod = 'card';
+        
+        // Обновить отображение
+        document.getElementById('currentBalanceDisplay').textContent = currentBalance.toLocaleString('ru-RU') + ' ₽';
+        updatePaymentSummary();
+        
+        // Установить выбранный метод оплаты
+        document.getElementById('card').checked = true;
+        
+        // Выделить выбранную кнопку суммы
+        document.querySelectorAll('.amount-btn').forEach(btn => {
+            btn.classList.remove('selected');
+        });
+        document.querySelectorAll('.amount-btn').forEach(btn => {
+            if (parseInt(btn.textContent) === selectedAmount) {
+                btn.classList.add('selected');
+            }
+        });
+        
+        document.getElementById('addMoneyModal').style.display = 'block';
+    }
+    
+    function selectAmount(amount) {
+        selectedAmount = amount;
+        
+        // Убрать выделение со всех кнопок
+        document.querySelectorAll('.amount-btn').forEach(btn => {
+            btn.classList.remove('selected');
+        });
+        
+        // Выделить выбранную кнопку
+        event.target.classList.add('selected');
+        
+        // Обновить отображение
+        updatePaymentSummary();
+    }
+    
+    function selectCustomAmount() {
+        const customAmount = parseInt(document.getElementById('customAmount').value) || 0;
+        
+        if (customAmount >= 100) {
+            selectedAmount = customAmount;
+            
+            // Убрать выделение с фиксированных сумм
+            document.querySelectorAll('.amount-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // Обновить отображение
+            updatePaymentSummary();
+        }
+    }
+    
+    function selectPaymentMethod(method) {
+        selectedPaymentMethod = method;
+        document.getElementById(method).checked = true;
+        updatePaymentSummary();
+    }
+    
+    function updatePaymentSummary() {
+        const totalAmount = selectedAmount;
+        const commission = calculateCommission(totalAmount, selectedPaymentMethod);
+        const totalToPay = totalAmount + commission;
+        const newBalance = currentBalance + totalAmount;
+        
+        document.getElementById('totalAmount').textContent = totalAmount.toLocaleString('ru-RU') + ' ₽';
+        document.getElementById('commissionAmount').textContent = commission.toLocaleString('ru-RU') + ' ₽';
+        document.getElementById('totalToPay').textContent = totalToPay.toLocaleString('ru-RU') + ' ₽';
+        document.getElementById('newBalanceDisplay').textContent = newBalance.toLocaleString('ru-RU') + ' ₽';
+    }
+    
+    function calculateCommission(amount, method) {
+        // Демо-логика расчета комиссии
+        switch(method) {
+            case 'card':
+                return Math.floor(amount * 0.02); // 2% комиссия
+            case 'sbp':
+                return 0; // Без комиссии
+            case 'yoomoney':
+                return Math.floor(amount * 0.01); // 1% комиссия
+            case 'qiwi':
+                return Math.floor(amount * 0.025); // 2.5% комиссия
+            default:
+                return 0;
+        }
+    }
+    
+    function processDemoPayment() {
+        const currentUser = JSON.parse(localStorage.getItem('ucheba_current_user'));
+        
+        if (!currentUser) {
+            alert('Пожалуйста, войдите в систему');
+            window.location.href = 'login_simple.html';
+            return;
+        }
+        
+        if (selectedAmount < 100) {
+            alert('Минимальная сумма пополнения - 100 ₽');
+            return;
+        }
+        
+        const methodNames = {
+            'card': 'Банковская карта',
+            'sbp': 'СБП',
+            'yoomoney': 'ЮMoney',
+            'qiwi': 'QIWI'
+        };
+        
+        // Обновить баланс через balanceManager
+        const result = window.balanceManager.updateUserBalance(
+            currentUser.id, 
+            selectedAmount, 
+            'add', 
+            `Пополнение через ${methodNames[selectedPaymentMethod]}`
+        );
+        
+        if (result.success) {
+            // Обновить отображение на странице
+            currentBalance = result.newBalance;
+            
+            // Обновить все элементы баланса на странице
+            document.querySelectorAll('.balance-amount, #studentBalance, #totalBalance, .balance-value').forEach(el => {
+                el.textContent = result.newBalance.toLocaleString('ru-RU') + ' ₽';
+            });
+            
+            closeModal('addMoneyModal');
+            
+            // Показать сообщение об успехе
+            const commission = calculateCommission(selectedAmount, selectedPaymentMethod);
+            const totalPaid = selectedAmount + commission;
+            
+            alert(`✅ Оплата прошла успешно!\n\n` +
+                  `Сумма пополнения: ${selectedAmount.toLocaleString('ru-RU')} ₽\n` +
+                  `Способ оплаты: ${methodNames[selectedPaymentMethod]}\n` +
+                  `Комиссия: ${commission.toLocaleString('ru-RU')} ₽\n` +
+                  `Итого оплачено: ${totalPaid.toLocaleString('ru-RU')} ₽\n` +
+                  `Новый баланс: ${result.newBalance.toLocaleString('ru-RU')} ₽`);
+            
+            // Обновить историю операций в таблице
+            updateOperationsTable();
+        } else {
+            alert('Ошибка при пополнении баланса');
+        }
+    }
+    
+    // Закрытие модального окна при клике вне его
+    window.onclick = function(event) {
+        const modal = document.getElementById('addMoneyModal');
+        if (event.target === modal) {
+            closeModal('addMoneyModal');
+        }
+    };
+</script>
+                        <i class="fas fa-plus"></i> Пополнить баланс
+                    </button>
+                </div>
+            </div>
+
+            <!-- История операций -->
+            <h3 style="margin-top: 2rem;">История операций</h3>
+            <table class="operations-table">
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Описание</th>
+                        <th>Тип</th>
+                        <th>Сумма</th>
+                        <th>Остаток</th>
+                    </tr>
+                </thead>
+                <tbody id="operationsTableBody">
+                    <tr>
+                        <td>15.12.2024</td>
+                        <td>Пополнение через Сбербанк Онлайн</td>
+                        <td><span class="operation-type operation-add">Пополнение</span></td>
+                        <td class="operation-positive">+5,000 ₽</td>
+                        <td>5,000 ₽</td>
+                    </tr>
+                    <tr>
+                        <td>10.12.2024</td>
+                        <td>Оплата урока математики</td>
+                        <td><span class="operation-type operation-subtract">Оплата урока</span></td>
+                        <td class="operation-negative">-1,500 ₽</td>
+                        <td>0 ₽</td>
+                    </tr>
+                    <tr>
+                        <td>05.12.2024</td>
+                        <td>Приветственный бонус</td>
+                        <td><span class="operation-type operation-bonus">Бонус</span></td>
+                        <td class="operation-positive">+500 ₽</td>
+                        <td>1,500 ₽</td>
+                    </tr>
+                    <tr>
+                        <td>01.12.2024</td>
+                        <td>Пополнение через карту</td>
+                        <td><span class="operation-type operation-add">Пополнение</span></td>
+                        <td class="operation-positive">+1,000 ₽</td>
+                        <td>1,000 ₽</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tab-content" id="tutorsTab">
+            <div class="tab-header">
+                <h2>Мои репетиторы</h2>
+                <button class="btn btn-primary btn-sm" onclick="findNewTutor()">Найти нового репетитора</button>
+            </div>
+            <div class="tutors-grid" id="tutorsList">
+                <!-- Tutors will be loaded here -->
+            </div>
+        </div>
+
+        <div class="tab-content" id="scheduleTab">
+            <div class="tab-header">
+                <h2>Расписание уроков</h2>
+                <div class="tab-actions">
+                    <button class="btn btn-outline btn-sm" onclick="prevWeek()">← Предыдущая</button>
+                    <span id="currentWeek">Неделя 11-17 декабря</span>
+                    <button class="btn btn-outline btn-sm" onclick="nextWeek()">Следующая →</button>
+                </div>
+            </div>
+            <div class="schedule-calendar" id="scheduleCalendar">
+                <!-- Schedule will be loaded here -->
+            </div>
+        </div>
+
+        <div class="tab-content" id="reviewsTab">
+            <div class="tab-header">
+                <h2>Мои отзывы</h2>
+                <button class="btn btn-primary btn-sm" onclick="writeNewReview()">Написать отзыв</button>
+            </div>
+            <div class="reviews-grid" id="reviewsList">
+                <!-- Reviews will be loaded here -->
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Модальное окно пополнения баланса -->
+<div class="modal" id="addMoneyModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-plus-circle"></i> Демо-пополнение баланса</h2>
+            <button class="modal-close" onclick="closeModal('addMoneyModal')">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="balance-info">
+                <p><strong>Текущий баланс:</strong> <span class="balance-positive" id="currentBalanceDisplay">5,000 ₽</span></p>
+            </div>
+            
+            <h3 style="margin: 1.5rem 0 1rem;">Выберите сумму для пополнения</h3>
+            <div class="amount-buttons" id="amountButtons">
+                <button class="amount-btn" onclick="selectAmount(500)">500 ₽</button>
+                <button class="amount-btn" onclick="selectAmount(1000)">1,000 ₽</button>
+                <button class="amount-btn" onclick="selectAmount(2000)">2,000 ₽</button>
+                <button class="amount-btn" onclick="selectAmount(3000)">3,000 ₽</button>
+                <button class="amount-btn selected" onclick="selectAmount(5000)">5,000 ₽</button>
+                <button class="amount-btn" onclick="selectAmount(10000)">10,000 ₽</button>
+            </div>
+            
+            <div style="margin: 1.5rem 0;">
+                <input type="number" class="custom-amount" id="customAmount" placeholder="Другая сумма" min="100" step="100" oninput="selectCustomAmount()">
+            </div>
+            
+            <div style="margin-top: 2rem; padding: 1rem; background: #f8fafc; border-radius: 0.5rem;">
+                <p><strong>Сумма пополнения:</strong> <span id="totalAmount" style="font-size: 1.5rem; font-weight: bold; color: #10b981;">5,000 ₽</span></p>
+                <p><strong>Новый баланс:</strong> <span id="newBalanceDisplay" style="font-size: 1.25rem; font-weight: bold; color: #3b82f6;">10,000 ₽</span></p>
+            </div>
+            
+            <div style="margin-top: 1rem; padding: 0.75rem; background: #fef3c7; border-radius: 0.5rem; color: #92400e; font-size: 0.9rem;">
+                <i class="fas fa-info-circle"></i> Это демо-режим. В реальном приложении здесь будет подключение к платежной системе.
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('addMoneyModal')">Отмена</button>
+            <button class="btn btn-primary" onclick="processDemoPayment()">
+                <i class="fas fa-check-circle"></i> Пополнить баланс
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Balance Management Modal -->
+<div class="modal" id="balanceModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-money-bill-wave"></i> Управление балансом</h2>
+            <button class="modal-close" onclick="closeModal('balanceModal')">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="balance-info">
+                <p><strong>Пользователь:</strong> <span id="balanceUserName">Иван Иванов</span></p>
+                <p><strong>Текущий баланс:</strong> <span id="currentUserBalance" class="balance-positive">5,000 ₽</span></p>
+            </div>
+            
+            <form id="balanceForm">
+                <input type="hidden" id="balanceUserId" value="3">
+                <input type="hidden" id="balanceUserType" value="student">
+                
+                <div class="form-group">
+                    <label for="operationType">Тип операции</label>
+                    <select id="operationType" class="form-control">
+                        <option value="add">Пополнение</option>
+                        <option value="subtract">Списание</option>
+                        <option value="bonus">Бонус</option>
+                        <option value="refund">Возврат</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="amount">Сумма (₽)</label>
+                    <input type="number" id="amount" class="form-control" min="1" required value="1000">
+                </div>
+                
+                <div class="form-group">
+                    <label for="comment">Комментарий</label>
+                    <textarea id="comment" class="form-control" rows="3" placeholder="Причина операции...">Пополнение баланса</textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('balanceModal')">Отмена</button>
+            <button class="btn btn-primary" onclick="processBalanceOperation()">Выполнить операцию</button>
+        </div>
+    </div>
+</div>
+
+<!-- Operations History Modal -->
+<div class="modal" id="operationsModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>История операций</h2>
+            <button class="modal-close" onclick="closeModal('operationsModal')">×</button>
+        </div>
+        <div class="modal-body">
+            <div id="operationsModalContent">
+                <div style="text-align: center; padding: 2rem;">
+                    <i class="fas fa-history" style="font-size: 3rem; color: var(--muted-fg); margin-bottom: 1rem;"></i>
+                    <h3>История операций</h3>
+                    <p>Загрузка истории операций...</p>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('operationsModal')">Закрыть</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<!-- Lesson Details Modal -->
+<div class="modal" id="lessonDetailsModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="lessonModalTitle">Детали урока</h2>
+            <button class="modal-close" onclick="closeModal('lessonDetailsModal')">×</button>
+        </div>
+        <div id="lessonDetailsContent">
+            <!-- Lesson details will be loaded here -->
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Lesson Modal -->
+<div class="modal" id="cancelLessonModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Отмена урока</h2>
+            <button class="modal-close" onclick="closeModal('cancelLessonModal')">×</button>
+        </div>
+        <form id="cancelLessonForm" onsubmit="submitCancelLesson(event)">
+            <input type="hidden" id="cancelLessonId">
+            <div class="form-group">
+                <label for="cancelReason">Причина отмены</label>
+                <textarea id="cancelReason" rows="4" placeholder="Пожалуйста, укажите причину отмены урока..." required></textarea>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="notifyTutor" checked>
+                    Уведомить репетитора
+                </label>
+            </div>
+            <div class="action-buttons">
+                <button type="button" class="btn btn-outline" onclick="closeModal('cancelLessonModal')">Отмена</button>
+                <button type="submit" class="btn btn-danger">Отменить урок</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Review Modal -->
+<div class="modal" id="reviewModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="reviewModalTitle">Оставить отзыв</h2>
+            <button class="modal-close" onclick="closeModal('reviewModal')">×</button>
+        </div>
+        <form id="reviewForm" onsubmit="submitReview(event)">
+            <input type="hidden" id="reviewLessonId">
+            <div class="form-group">
+                <label for="reviewRating">Оценка</label>
+                <div class="rating-input" id="ratingStars">
+                    <span class="star" data-value="1">★</span>
+                    <span class="star" data-value="2">★</span>
+                    <span class="star" data-value="3">★</span>
+                    <span class="star" data-value="4">★</span>
+                    <span class="star" data-value="5">★</span>
+                </div>
+                <input type="hidden" id="reviewRatingValue" value="5">
+            </div>
+            <div class="form-group">
+                <label for="reviewText">Текст отзыва</label>
+                <textarea id="reviewText" rows="4" placeholder="Расскажите о вашем опыте обучения..." required></textarea>
+            </div>
+            <div class="action-buttons">
+                <button type="button" class="btn btn-outline" onclick="closeModal('reviewModal')">Отмена</button>
+                <button type="submit" class="btn btn-primary">Отправить отзыв</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal" id="editProfileModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Редактирование профиля</h2>
+            <button class="modal-close" onclick="closeModal('editProfileModal')">×</button>
+        </div>
+        <form id="editProfileForm" onsubmit="saveProfileChanges(event)">
+            <div class="form-group">
+                <label for="editFirstName">Имя</label>
+                <input type="text" id="editFirstName" required>
+            </div>
+            <div class="form-group">
+                <label for="editLastName">Фамилия</label>
+                <input type="text" id="editLastName" required>
+            </div>
+            <div class="form-group">
+                <label for="editEmail">Email</label>
+                <input type="email" id="editEmail" required>
+            </div>
+            <div class="form-group">
+                <label for="editPhone">Телефон</label>
+                <input type="tel" id="editPhone">
+            </div>
+            <div class="form-group">
+                <label for="editGrade">Класс/Курс</label>
+                <input type="text" id="editGrade" placeholder="11 класс">
+            </div>
+            <div class="form-group">
+                <label for="editInterests">Интересы</label>
+                <input type="text" id="editInterests" placeholder="Математика, Физика, Программирование">
+            </div>
+            <div class="action-buttons">
+                <button type="button" class="btn btn-outline" onclick="closeModal('editProfileModal')">Отмена</button>
+                <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="js/profile_student.js"></script>
+<script src="js/balance_functions.js"></script>
+<script>
+    // Демо-функции для управления балансом
+    let selectedAmount = 0;
+    let currentBalance = 0;
+    
+    function switchTab(tabName) {
+        // Скрыть все вкладки
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        
+        // Убрать активный класс со всех кнопок вкладок
+        document.querySelectorAll('.tab').forEach(tabBtn => {
+            tabBtn.classList.remove('active');
+        });
+        
+        // Показать выбранную вкладку
+        document.getElementById(tabName + 'Tab').classList.add('active');
+        
+        // Активировать кнопку вкладки
+        document.getElementById(tabName + 'TabBtn').classList.add('active');
+    }
+    
+    function manageUserBalance(userId, userType) {
+        document.getElementById('balanceModal').style.display = 'block';
+    }
+    
+    function showUserOperations(userId, userType) {
+        // Загрузить историю операций
+        const operations = window.balanceManager.getUserOperations(userId) || [];
+        const content = document.getElementById('operationsModalContent');
+        
+        if (operations.length === 0) {
+            content.innerHTML = `
+                <div style="text-align: center; padding: 2rem;">
+                    <i class="fas fa-history" style="font-size: 3rem; color: var(--muted-fg); margin-bottom: 1rem;"></i>
+                    <h3>Нет операций</h3>
+                    <p>У вас пока нет операций по балансу.</p>
+                </div>
+            `;
+        } else {
+            let html = `
+                <table class="operations-table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Дата</th>
+                            <th>Тип</th>
+                            <th>Сумма</th>
+                            <th>Комментарий</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            operations.forEach(op => {
+                const date = new Date(op.date).toLocaleDateString('ru-RU');
+                const typeText = window.balanceManager.getOperationTypeText(op.type);
+                const amountClass = op.amount > 0 ? 'operation-positive' : 'operation-negative';
+                const amountSign = op.amount > 0 ? '+' : '';
+                
+                html += `
+                    <tr>
+                        <td>${date}</td>
+                        <td>${typeText}</td>
+                        <td class="${amountClass}">${amountSign}${op.amount} ₽</td>
+                        <td>${op.comment || ''}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `</tbody></table>`;
+            content.innerHTML = html;
+        }
+        
+        document.getElementById('operationsModal').style.display = 'block';
+    }
+    
+    function showAddMoneyModal() {
+        // Получить текущий баланс пользователя
+        const currentUser = JSON.parse(localStorage.getItem('ucheba_current_user'));
+        if (currentUser) {
+            currentBalance = window.balanceManager.getUserBalance(currentUser.id) || 0;
+        }
+        
+        // Обновить отображение
+        document.getElementById('currentBalanceDisplay').textContent = currentBalance.toLocaleString('ru-RU') + ' ₽';
+        updateNewBalanceDisplay();
+        
+        document.getElementById('addMoneyModal').style.display = 'block';
+    }
+    
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+    
+    function selectAmount(amount) {
+        selectedAmount = amount;
+        
+        // Убрать выделение со всех кнопок
+        document.querySelectorAll('.amount-btn').forEach(btn => {
+            btn.classList.remove('selected');
+        });
+        
+        // Выделить выбранную кнопку
+        event.target.classList.add('selected');
+        
+        // Обновить отображаемую сумму
+        document.getElementById('totalAmount').textContent = amount.toLocaleString('ru-RU') + ' ₽';
+        
+        // Обновить отображение нового баланса
+        updateNewBalanceDisplay();
+    }
+    
+    function selectCustomAmount() {
+        const customAmount = parseInt(document.getElementById('customAmount').value) || 0;
+        
+        if (customAmount >= 100) {
+            selectedAmount = customAmount;
+            
+            // Убрать выделение с фиксированных сумм
+            document.querySelectorAll('.amount-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // Обновить отображаемую сумму
+            document.getElementById('totalAmount').textContent = customAmount.toLocaleString('ru-RU') + ' ₽';
+            
+            // Обновить отображение нового баланса
+            updateNewBalanceDisplay();
+        }
+    }
+    
+    function updateNewBalanceDisplay() {
+        const newBalance = currentBalance + selectedAmount;
+        document.getElementById('newBalanceDisplay').textContent = newBalance.toLocaleString('ru-RU') + ' ₽';
+    }
+    
+    function processDemoPayment() {
+        const currentUser = JSON.parse(localStorage.getItem('ucheba_current_user'));
+        
+        if (!currentUser) {
+            alert('Пожалуйста, войдите в систему');
+            window.location.href = 'login_simple.html';
+            return;
+        }
+        
+        // Обновить баланс через balanceManager
+        const result = window.balanceManager.updateUserBalance(
+            currentUser.id, 
+            selectedAmount, 
+            'add', 
+            'Демо-пополнение баланса'
+        );
+        
+        if (result.success) {
+            // Обновить отображение на странице
+            currentBalance = result.newBalance;
+            
+            // Обновить все элементы баланса на странице
+            document.querySelectorAll('.balance-amount, #studentBalance, #totalBalance, .balance-value').forEach(el => {
+                el.textContent = result.newBalance.toLocaleString('ru-RU') + ' ₽';
+            });
+            
+            closeModal('addMoneyModal');
+            
+            // Показать сообщение об успехе
+            alert(`Баланс успешно пополнен на ${selectedAmount.toLocaleString('ru-RU')} ₽!\nНовый баланс: ${result.newBalance.toLocaleString('ru-RU')} ₽`);
+            
+            // Обновить историю операций в таблице
+            updateOperationsTable();
+        } else {
+            alert('Ошибка при пополнении баланса');
+        }
+    }
+    
+    function updateOperationsTable() {
+        const currentUser = JSON.parse(localStorage.getItem('ucheba_current_user'));
+        if (!currentUser) return;
+        
+        const operations = window.balanceManager.getUserOperations(currentUser.id, 10);
+        const tbody = document.getElementById('operationsTableBody');
+        
+        if (!tbody) return;
+        
+        tbody.innerHTML = '';
+        
+        operations.forEach(op => {
+            const date = new Date(op.date).toLocaleDateString('ru-RU');
+            const typeText = window.balanceManager.getOperationTypeText(op.type);
+            const typeClass = op.type === 'add' ? 'operation-add' : 
+                             op.type === 'subtract' ? 'operation-subtract' : 
+                             op.type === 'bonus' ? 'operation-bonus' : 'operation-salary';
+            const amountClass = op.amount > 0 ? 'operation-positive' : 'operation-negative';
+            const amountSign = op.amount > 0 ? '+' : '';
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${date}</td>
+                <td>${op.comment || typeText}</td>
+                <td><span class="operation-type ${typeClass}">${typeText}</span></td>
+                <td class="${amountClass}">${amountSign}${op.amount} ₽</td>
+                <td>${op.newBalance} ₽</td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+    
+    function processBalanceOperation() {
+        const userId = parseInt(document.getElementById('balanceUserId').value);
+        const userType = document.getElementById('balanceUserType').value;
+        const operationType = document.getElementById('operationType').value;
+        const amount = parseInt(document.getElementById('amount').value);
+        const comment = document.getElementById('comment').value;
+        
+        if (!amount || amount <= 0) {
+            alert('Пожалуйста, введите корректную сумму');
+            return;
+        }
+        
+        // Обновить баланс через balanceManager
+        const result = window.balanceManager.updateUserBalance(
+            userId, 
+            amount, 
+            operationType, 
+            comment
+        );
+        
+        if (result.success) {
+            alert(`Операция выполнена успешно!\nНовый баланс: ${result.newBalance} ₽`);
+            closeModal('balanceModal');
+            
+            // Если операция для текущего пользователя, обновить отображение
+            const currentUser = JSON.parse(localStorage.getItem('ucheba_current_user'));
+            if (currentUser && currentUser.id === userId) {
+                document.querySelectorAll('.balance-amount, #studentBalance, #totalBalance, .balance-value').forEach(el => {
+                    el.textContent = result.newBalance.toLocaleString('ru-RU') + ' ₽';
+                });
+                updateOperationsTable();
+            }
+        } else {
+            alert('Ошибка при выполнении операции');
+        }
+    }
+    
+    // Закрытие модальных окон при клике вне их
+    window.onclick = function(event) {
+        const modals = ['balanceModal', 'operationsModal', 'addMoneyModal', 'lessonDetailsModal', 'cancelLessonModal', 'reviewModal', 'editProfileModal'];
+        modals.forEach(modalId => {
+            const modal = document.getElementById(modalId);
+            if (event.target === modal) {
+                closeModal(modalId);
+            }
+        });
+    };
+    
+    // Инициализация при загрузке
+    document.addEventListener('DOMContentLoaded', function() {
+        // Инициализация демо-данных баланса
+        window.balanceManager.initDemoData();
+        
+        // Обновить историю операций
+        updateOperationsTable();
+        
+        // Обновить баланс текущего пользователя
+        const currentUser = JSON.parse(localStorage.getItem('ucheba_current_user'));
+        if (currentUser) {
+            const userBalance = window.balanceManager.getUserBalance(currentUser.id);
+            if (userBalance) {
+                document.querySelectorAll('.balance-amount, #studentBalance, #totalBalance, .balance-value').forEach(el => {
+                    el.textContent = userBalance.toLocaleString('ru-RU') + ' ₽';
+                });
+            }
+        }
+        
+        // Добавим стили для header actions
+        const style = document.createElement('style');
+        style.textContent = `
+            .user-balance-header {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                margin-right: 1rem;
+            }
+            .balance-amount {
+                font-weight: 600;
+                color: var(--primary);
+            }
+            .balance-display {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                background: var(--card);
+                padding: 0.75rem 1rem;
+                border-radius: 0.5rem;
+                border: 1px solid var(--border);
+            }
+            .balance-label {
+                color: var(--muted-fg);
+            }
+            .balance-value {
+                font-weight: bold;
+                color: #10b981;
+            }
+        `;
+        document.head.appendChild(style);
+    });
+</script>
+</body>
+</html>
